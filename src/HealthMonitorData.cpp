@@ -1,16 +1,16 @@
-// 
+//
 // Copyright (c) 2016 Advanced Micro Devices, Inc. All rights reserved.
-// 
+//
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
 // in the Software without restriction, including without limitation the rights
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in
 // all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
@@ -113,7 +113,7 @@ cl_int HealthMonitorData::AllocGPUBuffer(cl_command_queue queue, unsigned int NB
   error = ReleaseData();
   if (error != CL_SUCCESS)
     return error;
-  
+
   //we can now create new buffers
   for (int i = 0; i < m_NBBuffers; i++)
   {
@@ -126,6 +126,10 @@ cl_int HealthMonitorData::AllocGPUBuffer(cl_command_queue queue, unsigned int NB
 
   ErrorCheckBuffer = clCreateBuffer(ctx, CL_MEM_READ_WRITE, sizeof(unsigned int), NULL, &error);
   CHECK_ERROR_THREAD(error, "clCreateBuffer ErrorCheckBuffer");
+  unsigned int zero = 0;
+  error = clEnqueueWriteBuffer(queue, ErrorCheckBuffer, CL_FALSE, 0, sizeof(unsigned int), &zero, 0, NULL, NULL);
+  CHECK_ERROR_THREAD(error, "clEnqueueWriteBuffer ErrorCheckBuffer");
+
   ErrorCheckPinnedMemory = clCreateBuffer(ctx, CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR, sizeof(unsigned int), NULL, &error);
   CHECK_ERROR_THREAD(error, "clCreateBuffer ErrorCheckPinnedMemory");
 
@@ -148,7 +152,7 @@ cl_int HealthMonitorData::TransferGPUBuffer( vector<float>& A,  cl_kernel Comput
     cout << "need to exit the application as no CL buffer has been createad" << endl;
     return 1;
   }
-    
+
 
   error = clEnqueueWriteBuffer(queue, bufA[0], CL_FALSE, 0, m_NBElements * sizeof(float), &(A[0]), 0, NULL, NULL);
   CHECK_ERROR_THREAD(error, "clEnqueueWriteBuffer A");
@@ -190,7 +194,7 @@ double HealthMonitorData::run(cl_kernel Inverse, cl_kernel Compare, cl_int& erro
     error = Runinverse(Inverse, false, time);
     if (error)
       return 0.0;
-   
+
     error = RunControl(Compare);
     if (error)
       return 0.0;
@@ -252,7 +256,7 @@ cl_int HealthMonitorData::RunControl( cl_kernel Compare)
   cl_int error;
   size_t gs[1] = { (size_t) m_NBElements };
   size_t ls[1] = { (size_t) 64 };
-  
+
   error = clSetKernelArg(Compare, 2, sizeof(cl_mem), &ErrorCheckBuffer);
   CHECK_ERROR_THREAD(error, "clSetKernelArg");
 
