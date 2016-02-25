@@ -21,21 +21,24 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.8.12 )
 # A standard FindOpenCL.cmake module ships with cmake 3.1, but we supply our own until 3.1 becomes more prevalent
 SET( CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake;${PROJECT_SOURCE_DIR}/../cmake;${CMAKE_MODULE_PATH} )
 MESSAGE( STATUS "CMAKE_MODULE_PATH=${CMAKE_MODULE_PATH}" )
+IF("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
+  SET_PROPERTY(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
+ENDIF("${CMAKE_SIZEOF_VOID_P}" EQUAL "8")
 FIND_PACKAGE( OpenCL REQUIRED )
 MESSAGE( STATUS "OPENCL_INCLUDE_DIRS=${OPENCL_INCLUDE_DIRS}" )
 IF(CMAKE_COMPILER_IS_GNUCXX)
   FIND_PACKAGE( Threads REQUIRED )
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
 
-SET( HealthMonitor.src
-  HealthMonitorData.cpp
+SET( StatusMonitor.src
+  StatusMonitorData.cpp
   HealthTest.cpp
   threadManagement.cpp
   timer.cpp
 )
 
-SET( HealthMonitor.hdr
-  include/HealthMonitorData.h
+SET( StatusMonitor.hdr
+  include/StatusMonitorData.h
   include/Helper.h
   include/threadManagement.h
   include/Timer.h
@@ -61,11 +64,11 @@ MESSAGE( STATUS "PROJECT_SOURCE_DIR=${PROJECT_SOURCE_DIR}" )
 MESSAGE( STATUS "PROJECT_SOURCE_DIR/include=${PROJECT_SOURCE_DIR}/include" )
 MESSAGE( STATUS "PROJECT_SOURCE_DIR/src/include=${PROJECT_SOURCE_DIR}/src/include" )
 
-ADD_EXECUTABLE( HealthMonitor  ${HealthMonitor.src} ${HealthMonitor.hdr} )
+ADD_EXECUTABLE( StatusMonitor  ${StatusMonitor.src} ${StatusMonitor.hdr} )
 IF(CMAKE_COMPILER_IS_GNUCXX)
-  TARGET_LINK_LIBRARIES( HealthMonitor ${OPENCL_LIBRARIES} pthread )
+  TARGET_LINK_LIBRARIES( StatusMonitor ${OPENCL_LIBRARIES} pthread )
 ELSE(CMAKE_COMPILER_IS_GNUCXX)
-  TARGET_LINK_LIBRARIES( HealthMonitor ${OPENCL_LIBRARIES} )
+  TARGET_LINK_LIBRARIES( StatusMonitor ${OPENCL_LIBRARIES} )
 ENDIF(CMAKE_COMPILER_IS_GNUCXX)
-SET_TARGET_PROPERTIES( HealthMonitor PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/staging" )
+SET_TARGET_PROPERTIES( StatusMonitor PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${PROJECT_BINARY_DIR}/staging" )
 

@@ -30,7 +30,7 @@
 
 #include <iostream>
 #include <fstream>
-#include "HealthMonitorData.h"
+#include "StatusMonitorData.h"
 #include <vector>
 
 #include "CL/opencl.h"
@@ -146,7 +146,7 @@ void
 #endif
 TestProcedure(thread_data* data)
 {
-  HealthMonitorData testdata(data->NBBuffers, data->ctx, data->GPUID);
+  StatusMonitorData testdata(data->NBBuffers, data->ctx, data->GPUID);
 
   CPerfCounter timer;
   timer.Start();
@@ -156,7 +156,7 @@ TestProcedure(thread_data* data)
   int error = 0;
 
 #pragma omp parallel for
-  for (unsigned int i=0; i<A.size(); ++i)
+  for (int i=0; i<A.size(); ++i)
     A[i] = (float)rand()/RAND_MAX;
   
 
@@ -585,7 +585,7 @@ void my_handler(int s)
 
 void Usage(void)
 {
-    printf("Usage: HealthTest -m mode (=0 use 31 bufferss, =1 use 310 buffers, =2 use 2000 buffers) -iDD devices (comma separated list of device Ids)\n");
+    printf("Usage: StatusMonitor -m mode (=0 use 31 bufferss, =1 use 310 buffers, =2 use 2000 buffers) -iDD devices (comma separated list of device Ids)\n");
     exit (-10);
 }
 
@@ -675,7 +675,7 @@ int main( int argc, char *argv[])
   //sgemm1
   //std::string srcXgemm;
   //
-  //srcXgemm = get_file_contents("HealthMonitorKernels.cl");
+  //srcXgemm = get_file_contents("StatusMonitorKernels.cl");
 
   const char * C_KernelString = KernelString.c_str();
   std::size_t C_KernelString_size[] = { strlen(C_KernelString) };

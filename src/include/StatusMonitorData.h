@@ -28,11 +28,11 @@
 
 using namespace std;
 
-class HealthMonitorData
+class StatusMonitorData
 {
 public:
-  HealthMonitorData(int NBBuffers, cl_context context, int GPUID);
-  ~HealthMonitorData(void);
+  StatusMonitorData(int NBBuffers, cl_context context, int GPUID);
+  ~StatusMonitorData(void);
 
   cl_int AllocGPUBuffer(cl_command_queue queue, unsigned int NBElements);
   cl_int TransferGPUBuffer(vector<float>& A, cl_kernel ComputeB);

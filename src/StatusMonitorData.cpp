@@ -20,7 +20,7 @@
 // THE SOFTWARE.
 //
 
-#include "HealthMonitorData.h"
+#include "StatusMonitorData.h"
 #include <iostream>
 
 
@@ -28,7 +28,7 @@
 
 using namespace std;
 
-HealthMonitorData::HealthMonitorData(int NBBuffers, cl_context context, int GPUID) :
+StatusMonitorData::StatusMonitorData(int NBBuffers, cl_context context, int GPUID) :
 m_NBBuffers(NBBuffers)
 , ErrorCheckBuffer(NULL)
 , ErrorCheckPinnedMemory(NULL)
@@ -42,14 +42,14 @@ m_NBBuffers(NBBuffers)
 {
 }
 
-HealthMonitorData::~HealthMonitorData()
+StatusMonitorData::~StatusMonitorData()
 {
   ErrorOnGPU();
   ReleaseData();
 }
 
 
-cl_int HealthMonitorData::ReleaseData()
+cl_int StatusMonitorData::ReleaseData()
 {
   int error = CL_SUCCESS;
   for (int i = 0; i < m_NBBuffers; i++)
@@ -97,7 +97,7 @@ cl_int HealthMonitorData::ReleaseData()
   return error;
 }
 
-cl_int HealthMonitorData::AllocGPUBuffer(cl_command_queue queue, unsigned int NBElements)
+cl_int StatusMonitorData::AllocGPUBuffer(cl_command_queue queue, unsigned int NBElements)
 {
   int error = CL_SUCCESS;
   m_NBElements = NBElements;
@@ -141,7 +141,7 @@ cl_int HealthMonitorData::AllocGPUBuffer(cl_command_queue queue, unsigned int NB
 }
 
 
-cl_int HealthMonitorData::TransferGPUBuffer( vector<float>& A,  cl_kernel ComputeB)
+cl_int StatusMonitorData::TransferGPUBuffer( vector<float>& A,  cl_kernel ComputeB)
 {
   int error = 0;
   size_t gs[1] = { (size_t) m_NBElements };
@@ -186,7 +186,7 @@ cl_int HealthMonitorData::TransferGPUBuffer( vector<float>& A,  cl_kernel Comput
 
 
 
-double HealthMonitorData::run(cl_kernel Inverse, cl_kernel Compare, cl_int& error)
+double StatusMonitorData::run(cl_kernel Inverse, cl_kernel Compare, cl_int& error)
 {
   double time = 0.0;
   if (IsRunOk)
@@ -209,7 +209,7 @@ double HealthMonitorData::run(cl_kernel Inverse, cl_kernel Compare, cl_int& erro
 
 
 
-cl_int HealthMonitorData::Runinverse(cl_kernel Inverse, bool PerformanceMode, double& time)
+cl_int StatusMonitorData::Runinverse(cl_kernel Inverse, bool PerformanceMode, double& time)
 {
   cl_int error;
   size_t gs[1] = { (size_t) m_NBElements };
@@ -251,7 +251,7 @@ cl_int HealthMonitorData::Runinverse(cl_kernel Inverse, bool PerformanceMode, do
   return CL_SUCCESS;
 }
 
-cl_int HealthMonitorData::RunControl( cl_kernel Compare)
+cl_int StatusMonitorData::RunControl( cl_kernel Compare)
 {
   cl_int error;
   size_t gs[1] = { (size_t) m_NBElements };
@@ -284,7 +284,7 @@ cl_int HealthMonitorData::RunControl( cl_kernel Compare)
 }
 
 
-cl_int HealthMonitorData::ErrorOnGPU()
+cl_int StatusMonitorData::ErrorOnGPU()
 {
   cl_int error = 0;
 
